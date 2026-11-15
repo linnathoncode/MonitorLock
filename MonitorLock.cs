@@ -445,6 +445,11 @@ static class Art
 
 static class Program
 {
+    static void CrashLog(string m)
+    {
+        try { File.AppendAllText(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "MonitorLock.log"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + m + Environment.NewLine); } catch { }
+    }
+
     [STAThread]
     static void Main()
     {
@@ -453,6 +458,13 @@ static class Program
         using (var mx = new System.Threading.Mutex(true, "MonitorLock_single_instance", out created))
         {
             if (!created) return;
+            // never die silently: log any error and keep running
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += (s, e) => CrashLog("UI error (kept running): " + e.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (s, e) => CrashLog("FATAL: " + e.ExceptionObject);
+            Application.ApplicationExit += (s, e) => CrashLog("exiting normally");
+            Microsoft.Win32.SystemEvents.SessionEnding += (s, e) => CrashLog("Windows session ending: " + e.Reason);
+            CrashLog("started");
             Application.EnableVisualStyles();
             Application.Run(new LockForm());
         }

@@ -138,7 +138,7 @@ class LockForm : Form
         tray.Text = Trunc(string.Format("MonitorLock: {0} windows locked on {1}", saved.Count, lockedDevice.Replace("\\\\.\\", "")));
         tray.Icon = Art.TrayIcon(true);
         Log("locked " + lockedDevice + " " + b + ": " + string.Join(" | ", saved.ConvertAll(s => s.Title).ToArray()));
-        tray.ShowBalloonTip(2500, "MonitorLock", saved.Count + " windows locked on this monitor.", ToolTipIcon.Info);
+        // no popup notification: the tray icon turns green and the window shows the state
     }
 
     static string Trunc(string s) { return s.Length > 63 ? s.Substring(0, 63) : s; }

@@ -243,25 +243,25 @@ class ControlPanelForm : Form
         owner = o;
         Text = "MonitorLock"; FormBorderStyle = FormBorderStyle.FixedSingle; MaximizeBox = false; MinimizeBox = false;
         ShowInTaskbar = false; TopMost = true; Font = new Font("Segoe UI", 9.5f); Icon = Art.TrayIcon(true);
-        ClientSize = new Size(240, 196);
+        ClientSize = new Size(300, 262);
         BackColor = Color.FromArgb(32, 32, 32); ForeColor = Color.FromArgb(230, 230, 230);
 
-        status = new Label { Location = new Point(12, 10), Size = new Size(216, 20) };
-        map = new MonitorMap { Location = new Point(12, 34), Size = new Size(216, 76) };
+        status = new Label { Location = new Point(12, 12), Size = new Size(276, 20) };
+        map = new MonitorMap { Location = new Point(12, 38), Size = new Size(276, 130) };
         map.Picked += dev =>
         {
             // picking another monitor while locked moves the lock to it right away
             if (owner.LockedDevice != null && owner.LockedDevice != dev) { var s = MonitorMap.Find(dev); if (s != null) owner.LockOn(s); }
             RefreshView();
         };
-        toggle = Btn("", 12, 120, (s, e) =>
+        toggle = Btn("", 80, 180, (s, e) =>
         {
             if (owner.LockedDevice == null) { var sc = MonitorMap.Find(map.Selected); if (sc != null) owner.LockOn(sc); }
             else owner.Unlock();
             RefreshView();
         });
-        toggle.Width = 216; // Restore button removed; auto-restore + right-click "Restore now" cover it
-        startup = new CheckBox { Text = "Start with Windows", Location = new Point(12, 164), AutoSize = true };
+        toggle.Size = new Size(140, 34); // centred; Restore lives in the right-click menu
+        startup = new CheckBox { Text = "Start with Windows", Location = new Point(12, 232), AutoSize = true };
         startup.CheckedChanged += (s, e) => SetStartup(startup.Checked);
         Controls.AddRange(new Control[] { status, map, toggle, startup });
 
@@ -283,9 +283,7 @@ class ControlPanelForm : Form
         status.Text = locked ? "● Locked (" + owner.SavedWindows.Count + " windows)" : "○ Unlocked – pick a screen";
         status.ForeColor = locked ? Color.FromArgb(120, 210, 140) : Color.FromArgb(170, 170, 170);
         toggle.Text = locked ? "Unlock" : "Lock";
-        var old = toggle.Image;
-        toggle.Image = Art.Padlock(locked, ForeColor, 16); // open padlock = the button unlocks
-        if (old != null) old.Dispose();
+        toggle.Image = null; // the padlock is drawn on the monitor in the map instead
         map.LockedDevice = owner.LockedDevice;
         if (locked) map.Selected = owner.LockedDevice;
         else if (MonitorMap.Find(map.Selected) == null) { var s = MonitorMap.FirstSecondaryOrPrimary(); map.Selected = s == null ? null : s.DeviceName; }
@@ -342,13 +340,19 @@ class MonitorMap : Control
                 g.FillRectangle(fill, r); g.DrawRectangle(pen, r.X, r.Y, r.Width, r.Height);
             }
             string label = s.DeviceName.Replace("\\\\.\\DISPLAY", "") + (s.Primary ? " • main" : "");
-            using (var f = new Font("Segoe UI", 8f))
+            // padlock on the chosen monitor: closed + green when locked, open + grey when only selected
+            bool icon = locked || (sel && LockedDevice == null);
+            int lsz = 20;
+            using (var f = new Font("Segoe UI", 8.5f))
             using (var br = new SolidBrush(Color.FromArgb(200, 200, 200)))
             {
                 var sz = g.MeasureString(label, f);
-                g.DrawString(label, f, br, r.X + (r.Width - sz.Width) / 2, r.Y + (r.Height - sz.Height) / 2 - (locked ? 6 : 0));
+                float block = icon ? lsz + 4 + sz.Height : sz.Height, top = r.Y + (r.Height - block) / 2;
+                if (icon)
+                    using (var lk = Art.Padlock(!locked, locked ? green : Color.FromArgb(170, 170, 170), lsz))
+                        g.DrawImage(lk, r.X + (r.Width - lsz) / 2, top, lsz, lsz);
+                g.DrawString(label, f, br, r.X + (r.Width - sz.Width) / 2, icon ? top + lsz + 4 : top);
             }
-            if (locked) using (var lk = Art.Padlock(false, green, 12)) g.DrawImage(lk, r.X + (r.Width - 12) / 2, r.Y + r.Height / 2 + 2, 12, 12);
             n++;
         }
     }

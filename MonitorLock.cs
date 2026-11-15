@@ -260,11 +260,10 @@ class ControlPanelForm : Form
             else owner.Unlock();
             RefreshView();
         });
-        var restore = Btn("Restore", 124, 120, (s, e) => { owner.RestoreNow(); RefreshView(); });
-        restore.Image = Art.Restore(ForeColor, 16);
+        toggle.Width = 216; // Restore button removed; auto-restore + right-click "Restore now" cover it
         startup = new CheckBox { Text = "Start with Windows", Location = new Point(12, 164), AutoSize = true };
         startup.CheckedChanged += (s, e) => SetStartup(startup.Checked);
-        Controls.AddRange(new Control[] { status, map, toggle, restore, startup });
+        Controls.AddRange(new Control[] { status, map, toggle, startup });
 
         Deactivate += (s, e) => Hide();
         FormClosing += (s, e) => { if (e.CloseReason == CloseReason.UserClosing) { e.Cancel = true; Hide(); } };

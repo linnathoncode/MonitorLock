@@ -11,7 +11,7 @@ MonitorLock remembers each window's position **relative to the monitor it's on**
 ## Use
 
 - Run `MonitorLock.exe`. A monitor icon with a padlock appears in the tray: green when locked, grey when not.
-- **Left-click** the icon to open the panel. Pick a screen on the mini map, then **Lock**. **Restore** puts the windows back right away, and **Start with Windows** is a checkbox.
+- **Left-click** the icon to open the panel. Pick a screen on the mini map, then **Lock**. **Start with Windows** is a checkbox.
 - **Right-click** for the quick menu (per-monitor lock, restore, unlock, exit).
 - On start, it locks the first non-main monitor automatically after 15 seconds.
 - Windows you move on the locked monitor are remembered at their new spot, and new windows opened there are added automatically.

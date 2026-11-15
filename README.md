@@ -1,10 +1,10 @@
-﻿# MonitorLock
+# MonitorLock
 
 A tiny Windows tray tool that keeps the windows on one monitor exactly where you put them, even when another monitor changes resolution.
 
 ## Why
 
-Play a game in exclusive fullscreen at a lower resolution (say CS2 at 1920Ã—1080 on a 2560Ã—1440 screen) and Windows rearranges the desktop. Any monitor to the right of the main one gets moved, and the windows on it get pushed around. GPU scaling doesn't help, because Windows still sees the resolution change.
+Play a game in exclusive fullscreen at a lower resolution (say CS2 at 1920×1080 on a 2560×1440 screen) and Windows rearranges the desktop. Any monitor to the right of the main one gets moved, and the windows on it get pushed around. GPU scaling doesn't help, because Windows still sees the resolution change.
 
 MonitorLock remembers each window's position **relative to the monitor it's on**. When the layout changes, it puts the windows back on that monitor within a fraction of a second, without taking focus, so the game stays fullscreen.
 
@@ -30,5 +30,5 @@ This produces `MonitorLock.exe`. It's a single file with no dependencies, and th
 ## Limits
 
 - It can't move windows that belong to programs running as administrator (Windows blocks that).
-- Locks are kept in memory. After a restart it locks again automatically.
+- Locks are kept in memory, so everything starts unlocked after a restart.
 

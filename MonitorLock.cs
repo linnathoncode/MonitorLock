@@ -384,11 +384,22 @@ static class Art
             g.SmoothingMode = SmoothingMode.AntiAlias;
             float s = size;
             var body = new RectangleF(s * 0.18f, s * 0.46f, s * 0.64f, s * 0.46f);
-            float sw = s * 0.42f, sx = s * 0.29f, sy = open ? s * 0.04f : s * 0.12f;
-            if (open) sx += s * 0.16f;
-            g.DrawArc(pen, sx, sy, sw, s * 0.48f, 180, 180);
-            g.DrawLine(pen, sx + sw, sy + s * 0.24f, sx + sw, body.Top);
-            if (!open) g.DrawLine(pen, sx, sy + s * 0.24f, sx, body.Top);
+            float sw = s * 0.42f, sx = s * 0.29f;
+            if (!open)
+            {
+                float sy = s * 0.12f;
+                g.DrawArc(pen, sx, sy, sw, s * 0.48f, 180, 180);
+                g.DrawLine(pen, sx, sy + s * 0.24f, sx, body.Top);
+                g.DrawLine(pen, sx + sw, sy + s * 0.24f, sx + sw, body.Top);
+            }
+            else
+            {
+                // same shackle, lifted straight up: left leg stays in the body, right leg pulled out with a clear gap
+                float sy = s * 0.0f;
+                g.DrawArc(pen, sx, sy, sw, s * 0.44f, 180, 180);
+                g.DrawLine(pen, sx, sy + s * 0.22f, sx, body.Top);
+                g.DrawLine(pen, sx + sw, sy + s * 0.22f, sx + sw, sy + s * 0.30f);
+            }
             using (var path = Rounded(body, s * 0.08f)) g.FillPath(br, path);
             using (var hole = new SolidBrush(Color.FromArgb(55, 55, 55)))
                 g.FillEllipse(hole, s * 0.44f, s * 0.6f, s * 0.12f, s * 0.12f);

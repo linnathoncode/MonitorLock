@@ -299,6 +299,13 @@ class ControlPanelForm : Form
             if (on) k.SetValue("MonitorLock", "\"" + Application.ExecutablePath + "\"");
             else if (k.GetValue("MonitorLock") != null) k.DeleteValue("MonitorLock");
         }
+        // Newer Windows builds skip Run entries that have no "enabled" flag in StartupApproved.
+        using (var a = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"))
+        {
+            if (a == null) return;
+            if (on) a.SetValue("MonitorLock", new byte[] { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, Microsoft.Win32.RegistryValueKind.Binary);
+            else if (a.GetValue("MonitorLock") != null) a.DeleteValue("MonitorLock");
+        }
     }
 }
 
